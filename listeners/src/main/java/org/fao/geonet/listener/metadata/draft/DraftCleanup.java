@@ -25,6 +25,8 @@ package org.fao.geonet.listener.metadata.draft;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -34,7 +36,6 @@ import org.fao.geonet.domain.ISODate;
 import org.fao.geonet.domain.MetadataDraft;
 import org.fao.geonet.domain.MetadataFileUpload;
 import org.fao.geonet.domain.MetadataFileUpload_;
-import org.fao.geonet.events.md.MetadataPublished;
 import org.fao.geonet.events.md.MetadataRemove;
 import org.fao.geonet.kernel.XmlSerializer;
 import org.fao.geonet.kernel.datamanager.IMetadataOperations;
@@ -53,6 +54,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import jeeves.server.context.ServiceContext;
@@ -98,20 +101,26 @@ public class DraftCleanup implements ApplicationListener<MetadataRemove> {
 	private UserSavedSelectionRepository userSavedSelectionRepository;
 
 	@Override
+	@Transactional(value = TxType.REQUIRES_NEW)
 	public void onApplicationEvent(MetadataRemove event) {
-	}
+		Log.trace(Geonet.DATA_MANAGER, "A metadata has been removed. Cleanup associated drafts of " + event.getMd());
+		try {
+			List<MetadataDraft> toRemove = metadataDraftRepository
+					.findAll((Specification<MetadataDraft>) MetadataSpecs.hasMetadataUuid(event.getMd().getUuid()));
 
-	@TransactionalEventListener
-	public void doAfterCommit(MetadataRemove event) {
-		List<MetadataDraft> toRemove = metadataDraftRepository
-				.findAll((Specification<MetadataDraft>) MetadataSpecs.hasMetadataUuid(event.getMd().getUuid()));
-
-		for (MetadataDraft md : toRemove) {
-			remove(md);
+			for (MetadataDraft md : toRemove) {
+				remove(md);
+			}
+		} catch (Throwable e) {
+			Log.error(Geonet.DATA_MANAGER, "Couldn't clean up associated drafts of " + event.getMd(), e);
 		}
+
+		Log.trace(Geonet.DATA_MANAGER, "Finished cleaning up of " + event.getMd());
 	}
 
 	private void remove(MetadataDraft metadata) {
+		Log.trace(Geonet.DATA_MANAGER, "Removing " + metadata);
+
 		try {
 			ServiceContext context = ServiceContext.get();
 
@@ -137,7 +146,7 @@ public class DraftCleanup implements ApplicationListener<MetadataRemove> {
 
 			searchManager.delete(metadata.getId() + "");
 		} catch (Exception e) {
-			Log.error(Geonet.DATA_MANAGER, e);
+			Log.error(Geonet.DATA_MANAGER, "Couldn't cleanup draft " + metadata, e);
 		}
 	}
 }
