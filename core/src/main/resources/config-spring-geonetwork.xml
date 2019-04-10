@@ -47,8 +47,14 @@
 
   <bean id="AccessManager" class="org.fao.geonet.kernel.AccessManager" lazy-init="true"/>
   <bean id="DataManager" class="org.fao.geonet.kernel.DataManager" lazy-init="true"/>
-  <bean id="GeonetworkDataDirectory" class="org.fao.geonet.kernel.GeonetworkDataDirectory"
-        lazy-init="true"/>
+ <bean id="GeonetworkDataDirectory" class="org.fao.geonet.kernel.GeonetworkDataDirectory"
+        lazy-init="true">
+      <property name="systemDataDir" ref="GNSystemDataDir"/>
+  </bean>
+  <bean id="GNSystemDataDir" class="java.nio.file.Paths" factory-method="get">
+   <constructor-arg index="0" value="/home/bmdc/geonetwork/data"/>
+   <constructor-arg index="1"><array /></constructor-arg>
+</bean>
 
   <bean id="luceneConfig" class="org.fao.geonet.kernel.search.LuceneConfig" lazy-init="true">
     <constructor-arg ref="facets"/>
