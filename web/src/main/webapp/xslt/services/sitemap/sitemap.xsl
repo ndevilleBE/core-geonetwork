@@ -120,16 +120,16 @@
           <loc>
             <xsl:choose>
               <xsl:when test="$format='xml'">               	
-                <xsl:value-of select="concat($nodeUrl, 'api/records/', $uuid, '/formatters/xml')"/>
+                <xsl:value-of select="concat('http://metadata.naturalsciences.be/', $uuid)"/>
               </xsl:when>
 
               <xsl:otherwise>
-                <xsl:value-of select="concat($nodeUrl, 'api/records/', $uuid)"/>
+                <xsl:value-of select="concat('http://metadata.naturalsciences.be/', $uuid)"/>
               </xsl:otherwise>
             </xsl:choose>
           </loc>
           <lastmod>
-            <xsl:value-of select="$changedate"/>
+            <xsl:value-of select="format-dateTime($changedate, '[Y0001]/[M01]/[D01]')"/>
           </lastmod>
           <geo:geo>
             <geo:format>
