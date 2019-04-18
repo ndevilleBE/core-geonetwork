@@ -4163,6 +4163,7 @@
     gmd:applicationProfile[gco:CharacterString]|
     gmd:CI_Series/gmd:page[gco:CharacterString]|
     gmd:MD_BrowseGraphic/gmd:fileName[gco:CharacterString]|
+    gmd:MD_BrowseGraphic/gmd:fileDescription[gco:CharacterString]|
     gmd:MD_BrowseGraphic/gmd:fileType[gco:CharacterString]|
     gmd:unitsOfDistribution[gco:CharacterString]|
     gmd:amendmentNumber[gco:CharacterString]|
@@ -4171,6 +4172,7 @@
     gmd:turnaround[gco:CharacterString]|
     gmd:fees[gco:CharacterString]|
     gmd:userDeterminedLimitations[gco:CharacterString]|
+    gmd:RS_Identifier/gmd:code[gco:CharacterString]|
     gmd:RS_Identifier/gmd:codeSpace[gco:CharacterString]|
     gmd:RS_Identifier/gmd:version[gco:CharacterString]|
     gmd:edition[gco:CharacterString]|
@@ -4193,7 +4195,10 @@
     srv:SV_OperationMetadata/srv:invocationName[gco:CharacterString]|
     srv:serviceTypeVersion[gco:CharacterString]|
     srv:operationName[gco:CharacterString]|
-    srv:identifier[gco:CharacterString]
+    srv:identifier[gco:CharacterString]|
+    gmd:CI_OnlineResource/gmd:name[gco:CharacterString]|
+    gmd:electronicMailAddress[gco:CharacterString]|
+    gmd:MD_Format/gmd:name[gco:CharacterString]
     "
                 priority="100">
     <xsl:param name="schema"/>
