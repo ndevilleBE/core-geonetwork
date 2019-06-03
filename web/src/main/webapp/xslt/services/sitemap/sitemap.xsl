@@ -105,8 +105,7 @@
     </xsl:if>
   </xsl:template>
 
-
-  <xsl:template name="xml">
+ <xsl:template name="xml">
     <urlset
       xmlns:geo="http://www.google.com/geo/schemas/sitemap/1.0"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -120,27 +119,29 @@
         <url>
           <loc>
             <xsl:choose>
-              <xsl:when test="$format='xml'">               	
-                <xsl:value-of select="concat('http://metadata.naturalsciences.be/', $uuid)"/>
+              <xsl:when test="$format='xml'">
+                <xsl:value-of select="concat($nodeUrl,$lang, '/catalog.search#/metadata/', $uuid)"/>
               </xsl:when>
 
               <xsl:otherwise>
-                <xsl:value-of select="concat('http://metadata.naturalsciences.be/', $uuid)"/>
+                <xsl:value-of select="concat($nodeUrl,$lang, '/md.format.html?uuid=', $uuid, '&amp;xsl=xsl-view')"/>
               </xsl:otherwise>
             </xsl:choose>
           </loc>
           <lastmod>
-            <xsl:value-of select="format-dateTime($changedate, '[Y0001]/[M01]/[D01]')"/>
+            <xsl:value-of select="format-dateTime($changedate, '[Y0001]-[M01]-[D01]')"/>
           </lastmod>
-          <geo:geo>
+<!--          <geo:geo>
             <geo:format>
               <xsl:value-of select="$schemaid"/>
             </geo:format>
           </geo:geo>
-        </url>
+-->        </url>
       </xsl:for-each>
     </urlset>
   </xsl:template>
+
+  
 
   <xsl:template name="rdf">
     <urlset xmlns:sc="http://sw.deri.org/2007/07/sitemapextension/scschema.xsd"
